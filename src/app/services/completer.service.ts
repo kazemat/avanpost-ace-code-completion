@@ -99,7 +99,6 @@ export class CompleterService implements ICompleter {
       pos.column,
       prefix
     );
-    console.log(parentId);
     if (!parentId) {
       this._fillSnippets(editor);
       this._fillKeywords(editor, session, pos, prefix);
