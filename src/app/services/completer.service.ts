@@ -99,11 +99,8 @@ export class CompleterService implements ICompleter {
       pos.column,
       prefix
     );
-    if (!parentId) {
-      this._fillSnippets(editor);
-      this._fillKeywords(editor, session, pos, prefix);
-      completions.push(...this._getRoots());
-      completions.push(...this.snippets, ...this.keywords);
+
+    const fillText = () => {
       this.textCompleter.getCompletions(
         editor,
         session,
@@ -115,8 +112,20 @@ export class CompleterService implements ICompleter {
           }
         }
       );
+    };
+    if (!parentId) {
+      this._fillSnippets(editor);
+      this._fillKeywords(editor, session, pos, prefix);
+      completions.push(...this._getRoots());
+      completions.push(...this.snippets, ...this.keywords);
+      fillText();
     } else {
-      completions.push(...this._getChildren(parentId));
+      const children = this._getChildren(parentId);
+      completions.push(...children);
+
+      if (children.length === 0) {
+        fillText();
+      }
     }
 
     callback(null, completions);
